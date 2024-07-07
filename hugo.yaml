@@ -1,0 +1,24 @@
+baseURL: http://localhost:1313/
+languageCode: en-us
+title: Lnevx's Notes
+theme: PaperMod
+
+params:
+  defaultTheme: auto
+
+  profileMode:
+    enabled: true
+    title: Lnevx
+    subtitle: CTF enjoyer from Russia | Pwn
+
+  socialIcons:
+    - name: GitHub
+      url: "https://github.com/Lnevx"
+    - name: Telegram
+      url: "https://t.me/yarikartoshe4ka"
+    - name: HackTheBox
+      url: "https://app.hackthebox.com/profile/193477"
+    - name: CTFTime
+      url: "https://ctftime.org/user/159403"
+    - name: Pwnable
+      url: "https://pwnable.tw/user/36439"
