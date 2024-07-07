@@ -1,5 +1,4 @@
 baseURL: http://localhost:1313/
-languageCode: en-us
 title: Lnevx's Notes
 theme: PaperMod
 
@@ -10,7 +9,7 @@ params:
     enabled: true
     title: Lnevx
     subtitle: CTF enjoyer from Russia | Pwn
-    imageUrl: avatar.png
+    imageUrl: images/avatar.en.png
     imageWidth: 200px
     ImageHeight: 200px
 
@@ -25,3 +24,20 @@ params:
       url: "https://ctftime.org/user/159403"
     - name: Pwnable
       url: "https://pwnable.tw/user/36439"
+
+
+defaultContentLanguage: ru
+defaultContentLanguageInSubdir: true
+languages:
+  en:
+    languageCode: en
+    languageName: English
+
+  ru:
+    languageCode: ru
+    languageName: Русский
+
+    params:
+      profileMode:
+        subtitle: CTF игрок из России | Pwn
+        imageUrl: images/avatar.ru.png
