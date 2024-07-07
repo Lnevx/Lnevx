@@ -10,6 +10,9 @@ params:
     enabled: true
     title: Lnevx
     subtitle: CTF enjoyer from Russia | Pwn
+    imageUrl: avatar.png
+    imageWidth: 200px
+    ImageHeight: 200px
 
   socialIcons:
     - name: GitHub
