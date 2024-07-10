@@ -1,6 +1,6 @@
-baseURL: http://localhost:1313/
 title: Lnevx's Notes
 theme: PaperMod
+env: production
 
 params:
   defaultTheme: dark
@@ -25,6 +25,9 @@ params:
     - name: Pwnable
       url: "https://pwnable.tw/user/36439"
 
+  ShowCodeCopyButtons: true
+  ShowReadingTime: true
+  ShowToc: true
 
 defaultContentLanguage: ru
 defaultContentLanguageInSubdir: true

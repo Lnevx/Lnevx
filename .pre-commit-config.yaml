@@ -11,3 +11,12 @@ repos:
     rev: v0.41.0
     hooks:
       - id: markdownlint
+        args: [-c, .markdownlint.yaml]
+
+  - repo: local
+    hooks:
+      - id: exiftool
+        name: remove exif
+        language: system
+        entry: exiftool -all= -overwrite_original
+        types: ["image"]
