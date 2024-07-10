@@ -3,7 +3,7 @@ title: Lnevx's Notes
 theme: PaperMod
 
 params:
-  defaultTheme: auto
+  defaultTheme: dark
 
   profileMode:
     enabled: true
@@ -41,3 +41,12 @@ languages:
       profileMode:
         subtitle: CTF игрок из России | Pwn
         imageUrl: images/avatar.ru.png
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+  highlight:
+    noClasses: false
+    anchorLineNos: true
