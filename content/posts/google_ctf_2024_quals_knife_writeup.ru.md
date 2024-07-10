@@ -1,7 +1,8 @@
 ---
 title: "knife | Google CTF 2024 Quals"
-description: Решение задания "knife" из категории PWN
-tags: ["writeup", "pwn", "off-by-one"]
+description: Решение задания "knife" из категории pwn
+summary: Решение задания "knife" из категории pwn
+теги: ["writeup", "pwn", "off-by-one"]
 date: 2024-07-07T21:12:56+03:00
 draft: false
 ---

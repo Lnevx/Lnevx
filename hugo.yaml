@@ -28,6 +28,8 @@ params:
   ShowCodeCopyButtons: true
   ShowReadingTime: true
   ShowToc: true
+  ShowPageNums: true
+  mainsections: ["posts"]
 
 defaultContentLanguage: ru
 defaultContentLanguageInSubdir: true
@@ -35,10 +37,28 @@ languages:
   en:
     languageCode: en
     languageName: English
+    taxonomies:
+      tag: tags
+
+    menu:
+      main:
+        - name: Blog
+          url: posts
+        - name: Tags
+          url: tags
 
   ru:
     languageCode: ru
     languageName: Русский
+    taxonomies:
+      tag: теги
+
+    menu:
+      main:
+        - name: Блог
+          url: posts
+        - name: Категории
+          url: теги
 
     params:
       profileMode:
