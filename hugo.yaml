@@ -67,6 +67,7 @@ languages:
 
 markup:
   goldmark:
+    duplicateResourceFiles: true
     renderer:
       unsafe: true
 

