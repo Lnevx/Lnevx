@@ -3,15 +3,14 @@
 }
 
 
-.post-views > * {
-    display: inline-block;
-    vertical-align: middle;
+.post-views {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    float: right;
 }
 
 .post-views > span {
+    line-height: 16px;
     font-size: 16px;
-}
-
-.post-views {
-    float: right;
 }

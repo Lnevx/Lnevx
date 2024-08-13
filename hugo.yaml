@@ -67,6 +67,9 @@ languages:
         subtitle: CTF игрок из России | Pwn
         imageUrl: images/avatar.ru.png
 
+      taxonomies:
+        tag: теги
+
 markup:
   goldmark:
     duplicateResourceFiles: true
