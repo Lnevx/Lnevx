@@ -26,6 +26,7 @@ params:
     - name: Pwnable
       url: "https://pwnable.tw/user/36439"
 
+  Comments: true
   ShowCodeCopyButtons: true
   ShowReadingTime: true
   ShowToc: true

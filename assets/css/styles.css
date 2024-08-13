@@ -1,3 +1,17 @@
 .lnlinks {
     box-shadow: none !important;
 }
+
+
+.post-views > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.post-views > span {
+    font-size: 16px;
+}
+
+.post-views {
+    float: right;
+}

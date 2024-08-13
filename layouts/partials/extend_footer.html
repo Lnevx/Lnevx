@@ -1,2 +1,2 @@
-{{- $reference := resources.Get "js/reference_to_line.js" }}
+{{- $reference := resources.Get "js/reference_to_line.js" | resources.Minify }}
 <script defer crossorigin="anonymous" src="{{ $reference.RelPermalink }}"></script>
