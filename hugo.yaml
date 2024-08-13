@@ -1,6 +1,7 @@
 title: Lnevx's Notes
 theme: PaperMod
 env: production
+baseURL: "https://lnevx.tw"
 
 params:
   defaultTheme: dark
