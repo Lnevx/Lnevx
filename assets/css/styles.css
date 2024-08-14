@@ -63,3 +63,19 @@ html {
         --zoom: 0.85;
     }
 }
+
+@media screen and (min-width:1350px) {
+    .toc {
+        position: fixed;
+        top: 20dvh;
+        max-height: 60dvh;
+        z-index: 1;
+        overflow: auto;
+        right: calc(
+            (100dvw - (var(--main-width) + var(--gap) * 2 /* main width */))
+            / 2 /* right space width */ - 20dvw /* TOC width */ - 10px /* margin from main */
+        );
+        width: 20dvw;
+        font-size: .8em;
+    }
+}
