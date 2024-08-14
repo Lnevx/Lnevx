@@ -14,3 +14,23 @@
     line-height: 16px;
     font-size: 16px;
 }
+
+
+:root {
+    --zoom: 1;
+}
+
+html {
+    zoom: var(--zoom);
+}
+
+.main {
+    min-height: calc(100vh / var(--zoom) - var(--header-height) - var(--footer-height));
+    min-height: calc(100dvh / var(--zoom) - var(--header-height) - var(--footer-height));
+}
+
+@media screen and (max-width: 768px) {
+    :root {
+        --zoom: 0.85;
+    }
+}
