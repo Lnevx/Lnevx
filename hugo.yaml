@@ -3,6 +3,9 @@ theme: PaperMod
 env: production
 baseURL: "https://lnevx.tw"
 
+enableRobotsTXT: true
+enableEmoji: true
+
 params:
   defaultTheme: dark
 
