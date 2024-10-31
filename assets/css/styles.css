@@ -79,3 +79,11 @@ html {
         font-size: .8em;
     }
 }
+
+
+.medium-zoom-overlay, .medium-zoom-image--opened {
+    z-index: 999;
+}
+.medium-zoom-image {
+    zoom: calc(1 / var(--zoom));
+}
