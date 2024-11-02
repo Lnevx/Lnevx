@@ -605,4 +605,4 @@ if __name__ == '__main__':
 
 </details>
 
-![Result](./result.png)
+![BRICS+ CTF logo](./brics_ctf_logo.png)

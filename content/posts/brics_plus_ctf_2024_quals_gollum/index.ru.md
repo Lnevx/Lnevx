@@ -607,4 +607,4 @@ if __name__ == '__main__':
 
 </details>
 
-![Результат](./result.png)
+![BRICS+ CTF логотип](./brics_ctf_logo.png)
