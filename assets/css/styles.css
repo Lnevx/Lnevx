@@ -87,3 +87,7 @@ html {
 .medium-zoom-image {
     zoom: calc(1 / var(--zoom));
 }
+
+summary {
+    cursor: pointer;
+}

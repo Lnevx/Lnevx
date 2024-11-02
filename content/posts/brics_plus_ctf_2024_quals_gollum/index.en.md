@@ -1,31 +1,31 @@
 ---
 title: "gollum | BRICS+ CTF 2024 Quals"
-description: Решение задания "gollum" из категории pwn
-summary: Решение задания "gollum" из категории pwn
-теги: ["writeup", "pwn", "type confusion", "golang", "srop"]
+description: Writeup for the "gollum" challenge from the pwn category
+summary: Writeup for the "gollum" challenge from the pwn category
+tags: ["writeup", "pwn", "type confusion", "golang", "srop"]
 date: 2024-10-07T16:08:49+03:00
 author: Lnevx
 draft: false
 ---
 
-# Описание
+# Description
 
 > In the depths of Orodruin I have found a new type of database. <br>
 > It stores users and passwords within the single structure. <br>
 > I hope it's safe. I use it in production anyway.
 
-Согласно классификации разработчиков, задание **gollum** является самым простым
-по сложности заданием, однако под конец соревнований оно имело наименьшее количество
-решений и фактически оказалось самым сложным.
-<span style="color: red">
-**:drop_of_blood:&nbsp;Я&nbsp;же&nbsp;решил&nbsp;его&nbsp;первым&nbsp;:drop_of_blood:**
+According to the developers' classification, the **gollum** task is the simplest by
+complexity, but at the end of the competition it had the least number of solutions
+and actually turned out to be the most difficult.
+<span style="color: red;">
+**:drop_of_blood:&nbsp;In&nbsp;turn,&nbsp;I&nbsp;made&nbsp;firstblood&nbsp;:drop_of_blood:**
 </span>
 
-# Решение
+# Solution
 
-## Анализ
+## Analysis
 
-К заданию прилагается архив c исходным кодом на Go
+An archive with the Go source code is attached to the task
 
 ```sh
 $ tree
@@ -52,7 +52,7 @@ $ tree
         └── hashes.go
 ```
 
-Запустим `file` и `checksec`:
+Run `file` and `checksec`:
 
 ```sh
 $ file gollum
@@ -63,7 +63,7 @@ RELRO           STACK CANARY      NX            PIE             RPATH      RUNPA
 No RELRO        No canary found   NX enabled    No PIE          No RPATH   No RUNPATH   2347 Symbols  No      0           0           gollum
 ```
 
-Перед нами бинарь Golang, собранный в Debug версии. Запускаю бинарь:
+Here is the Golang binary built in Debug version. Launching the binary:
 
 ```sh
 ./gollum
@@ -94,14 +94,14 @@ No RELRO        No canary found   NX enabled    No PIE          No RPATH   No RU
 >
 ```
 
-Программа является неким подобием базы, с возможностью регистрации, авторизации и обновления
-описания пользователя. Стоит обратить внимание на само описание задания, где говорится о том,
-что пользователи и пароли хранятся в рамках единой структуры. Первая моя внезапно возникшая мысль
-была связана с уязвимостью **Type Confusion**, а как известно, первая мысль &ndash; самая верная
+The program is a kind of database, with the ability to register, authorize and update the user
+description. It's worth paying attention to the description of the task itself, which says
+that users and passwords are stored within a single structure. My first sudden thought
+was related to the vulnerability **Type Confusion**, and as you know, first thought, best thought
 
-### Исходный код
+### Source code
 
-#### Используемые модели
+#### Used models
 
 ```go {linenos=1,linenostart=19}
 type HashFunc func(Credential) string
@@ -124,7 +124,7 @@ type User struct {
 }
 ```
 
-#### Создание пользователя и выход из аккаунта
+#### Creating user and logging out
 
 ```go {linenos=1,linenostart=140,hl_lines="30"}
 func handleRegister(ctx *Context) {
@@ -171,11 +171,11 @@ func handleRegister(ctx *Context) {
 }
 ```
 
-Здесь происходит создание нового пользователя и добавление его в базу данных. Заметим одну
-неточность в реализации: при регистрации за основу берется структура `ctx.user`, поля которой
-уже могут быть определены
+This is where a new user is created and added to the database. Note one inaccuracy in the
+implementation: when registering, the `ctx.user` structure is taken as the basis, the fields
+of which can already be defined
 
-Эксплуатация описанной выше уязвимости возможна благодаря следующей ошибке
+Exploitation of the vulnerability described above is possible due to the following error
 
 ```go {linenos=1,linenostart=140}
 func handleLogout(ctx *Context) {
@@ -189,11 +189,11 @@ func handleLogout(ctx *Context) {
 }
 ```
 
-В данной функции происходит разлогинивание пользователя. Флаг `ctx.loggedIn` обнуляется, в отличие
-от структуры `ctx.user`. В совокупности две эти ошибки позволяют нам создать пользователя с
-уже **заполненным описанием**
+In this function, the user is logged out. The `ctx.loggedIn` flag is reset, unlike the
+`ctx.user` structure. Together, these two mistakes allow us to create a user with an already
+**filled description**
 
-#### Обновление описания и вход в аккаунт
+#### Updating description and logging in
 
 ```go {linenos=1,linenostart=121}
 func handleUpdate(ctx *Context) {
@@ -216,8 +216,8 @@ func handleUpdate(ctx *Context) {
 }
 ```
 
-При обновлении описания пользователя, его описание помещается в базу данных, однако структура
-`ctx.user` не обновляется. Чтобы это исправить, достаточно перезайти в аккаунт
+When updating the user description, its description is placed in the database, but the `ctx.user`
+structure is not updated. To fix this, just log in to your account
 
 ```go {linenos=1,linenostart=84,hl_lines="19"}
 func handleLogin(ctx *Context) {
@@ -243,7 +243,7 @@ func handleLogin(ctx *Context) {
 }
 ```
 
-#### Отладочная информация
+#### Debugging information
 
 ```go {linenos=1,linenostart=19,hl_lines="11"}
 func (db *Database) AddCredential(credential models.Credential) int {
@@ -280,17 +280,17 @@ func (db *Database) AddUser(user models.User) int {
 }
 ```
 
-При анализе исходного кода, я обратил внимание на данные строки. Я не придал им должного значения,
-однако меня смутило, что данная информация не выводится в консоль (что логично, ведь `fmt.Sprintf`
-возвращает строку и ничего не выводит). Практическое значение этого кода я не понял
+When analyzing the source code, I noticed these lines. I didn't attach proper importance to them, but
+I was confused that this info is not printed to the console (which is logical, because `fmt.Sprintf`
+returns a string and does not output anything). I did not understand meaning of this code
 
-## Эксплуатация
+## Exploitation
 
-Возвращаясь к моей мысле о Type Confusion, я решил поискать в интернете известные уязвимости Golang,
-и буквально первым результатом был [issue на GitHub](https://github.com/golang/go/issues/54456) с
-описанием данной проблемы. Как ни странно, версия Go совпадает с нашей
+Back to my thought about Type Confusion, I decided to google known Golang vulnerabilities, and
+literally the first result was [issue on GitHub](https://github.com/golang/go/issues/54456) with
+description of the problem. Oddly enough, the Go version is the same as ours
 
-Локальная версия Golang:
+Local version of Golang:
 
 ```docker {linenos=1,hl_lines="1"}
 FROM golang:1.19
@@ -300,27 +300,27 @@ WORKDIR /tmp/build
 CMD go build -o gollum ./cmd/main.go
 ```
 
-![Issue с уязвимость Type Confusion на GitHub](./github_issue_title.png)
+![Issue with Type Confusion vuln on GitHub](./github_issue_title.png)
 
-В issue также представлен PoC, который при запуске выдает ошибку сегментации. Проблема заключается
-в недоработке компилятора, который использует имена внутренних типов как есть, и создание нескольких
-внутренних типов с одинаковыми именами приводит к уязвимости Type Confusion
+The issue also presents a PoC, which throws a segfault at startup. The problem is an error in the
+compiler, which uses the names of internal types as is, and creating multiple internal types with
+the same names leads to a Type Confusion vulnerability.
 
-![PoC программа уязвимости Type Confusion](./type_confusion_poc.png)
+![PoC of Type Confusion vulnerability](./type_confusion_poc.png)
 
-Перекладывая это на наш случай, приходим к выводу, что в функции
+In our case, we come to the conclusion that in the function
 <a data-target="code-block" href="#hl-10-55">**AddUser**</a>
-тип поля структуры `debugEntry` не `models.User`, а `models.Credential`
-(который был определен ранее в
+field type of `debugEntry` structure is not `models.User`, but `models.Credential`
+(which was defined earlier in
 <a data-target="code-block" href="#hl-9-25">**AddCredential**</a>).
-С помощью GDB в этом можно легко убедиться
+This can be easily verified using GDB
 
-![Тип entry в функции AddCredential](./entry_type_in_add_credential.png)
-![Тип entry в функции AddUser](./entry_type_in_add_user.png)
+![Type of entry in AddCredential function](./entry_type_in_add_credential.png)
+![Type of entry in AddUser function](./entry_type_in_add_user.png)
 
-### Type Confusion для захвата RIP
+### Type Confusion for RIP control
 
-Заметим, что поля `Credential.hashFunc` и `User.Description` пересекаются
+Note that the fields `Credential.hashFunc` and `User.Description` overlap
 
 ```plain
 $ pahole -C gollum/models.Credential gollum
@@ -345,11 +345,10 @@ struct gollum/models.User {
 };
 ```
 
-Из-за того что `Credential.hashFunc` является указателем на таблицу методов, а `User.Description`
-&ndash; указателем на строку, мы можем с легкостью захватить RIP, указав в описании пользователя
-интересующий нас адрес. Однако уязвимость актуальна только **при создании** пользователя, поэтому
-мы воспользуемся <a data-target="code-block" href="#hl-5-171">еще одной уязвимостью</a>, описанной
-ранее
+Due to the fact that `Credential.hashFunc` is a pointer to method table, and `User.Description`
+is a pointer to string, we can easily override RIP by specifying the address we are interested in
+in the user description. However, the vulnerability is relevant only **when creating** user, so
+we will use <a data-target="code-block" href="#hl-5-171">another vulnerability</a> described earlier
 
 ```go {linenos=1,linenostart=57,hl_lines="3"}
     ...
@@ -373,21 +372,21 @@ func (credential Credential) String() string {
 }
 ```
 
-### Pivoting и SROP для получения оболочки
+### Pivoting and SROP to obtain shell
 
-В данный момент мы можем контролировать только RIP
+At the moment, we can only control RIP
 
-![Значения регистров после эксплуатации](./rip_control.png)
+![Registers state after explotaition](./rip_control.png)
 
-Для последующей эксплуатации с помощью ROP необходимо контролировать некоторое количество памяти стека.
-Заметим, что RSP указывает в область памяти, где находится строка с описанием, причем значение RSP
-указывает на память до строки
+For subsequent exploitation using ROP, it is necessary to control some stack memory. Note that
+the RSP points to the memory area where the description string is located, moreover, RSP points
+to the memory before the string
 
-![Адрес RSP и буфера](./rsp_vs_buf_address.png)
+![RSP value and buffer address](./rsp_vs_buf_address.png)
 
-Оффсет RSP до буфера случаен, однако 3 последних ниббла всегда статичны. Также практическим путем
-было выяснено, что оффсет не превышает 0x80000 и его можно быстро забрутить. Исходя из этого я
-подобрал несколько гаджетов для pivoting'а. Наиболее удачным оказался второй
+The offset to the buffer is random, but the last 3 nibbles are always static. I also found out in
+a practical way that offset does not exceed 0x80000 and it can be quickly bruted. Based on this, I
+picked up several gadgets for pivoting. The second one was the most successful
 
 ```python
 ADD_RSP = 0x45d0ba    #: add rsp, 0x20008 ; ret
@@ -395,8 +394,8 @@ ADD_RSP = 0x45d1ba    #: add rsp, 0x40008 ; ret
 ADD_RSP = 0x45d2ba    #: add rsp, 0x80008 ; ret
 ```
 
-Для вызова execve необходимо контролировать **rax**, **rdi**, **rsi** и **rdx**, а также иметь
-строку **/bin/sh** и знать ее адрес. Бинари, написанные на Go, не богаты гаджетами
+To call execve you need to control **rax**, **rdi**, **rsi** и **rdx**, as well as have the string
+**/bin/sh** and know its address. Binaries written in Go are not rich in gadgets
 
 ```sh
 $ ROPgadget --binary gollum | grep -E ': pop r.{2} ; ret$'
@@ -406,8 +405,7 @@ $ ROPgadget --binary gollum | grep -E ': pop r.{2} ; ret$'
 0x000000000042dc82 : pop rdx ; ret
 ```
 
-Я пошел немного эвриcтическим путем, а именно: с помощью известных простых гаджетов создал
-в памяти строку **/bin/sh**
+I went a bit heuristic way, namely: I created the string **/bin/sh** in memory via known gadgets
 
 ```python
 POP_RAX = 0x40c9d7                          #: pop rax ; ret
@@ -433,7 +431,7 @@ rop = [
 ]
 ```
 
-И выполнил SROP для настройки аргументов execve
+And performed SROP to set up registers for evecve
 
 ```python
 frame = SigreturnFrame()
@@ -449,10 +447,10 @@ rop += [
 ]
 ```
 
-### Собираем вместе
+### Putting together
 
 <details>
-    <summary>Эксплоит</summary>
+    <summary>Exploit</summary>
 
 ```python
 #!/usr/bin/env python3
@@ -607,4 +605,4 @@ if __name__ == '__main__':
 
 </details>
 
-![Результат](./result.png)
+![Result](./result.png)
