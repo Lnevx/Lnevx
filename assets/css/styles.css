@@ -91,3 +91,7 @@ html {
 summary {
     cursor: pointer;
 }
+
+code {
+    font-family: "Fira Code";
+}

@@ -1,8 +1,6 @@
+<!-- CEO -->
 <meta name="yandex-verification" content="f232772b39b54ff9" />
 <meta name="google-site-verification" content="nKIZlElaozkOyDhzY2dlQe5al0MZA2YBssF_FcN8X-c" />
-
-{{- $styles := resources.Get "css/styles.css" | resources.Minify }}
-<link crossorigin="anonymous" rel="stylesheet" href="{{ $styles.RelPermalink }}">
 
 <script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -19,6 +17,13 @@
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/97809000" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
+<!-- Functional -->
+{{ $common := resources.Get "css/styles.css" | resources.Minify }}
+<link crossorigin="anonymous" rel="preload stylesheet" href="{{ $common.RelPermalink }}">
+
+{{ $hlAnsi := resources.Get "css/highlight-ansi.css" | resources.Minify }}
+<link crossorigin="anonymous" rel="preload stylesheet" href="{{ $hlAnsi.RelPermalink }}">
+
 <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
 <script>
   window.onload = () => {
@@ -27,3 +32,5 @@
     });
   }
 </script>
+
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">

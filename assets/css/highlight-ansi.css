@@ -1,0 +1,124 @@
+.language-ansi {
+    --color-0: var(--code-block-bg);
+    --color-1: #d41919;
+    --color-2: #5ebdab;
+    --color-3: #fea44c;
+    --color-4: #367bf0;
+    --color-5: #9755b3;
+    --color-6: #49aee6;
+    --color-7: #e6e6e6;
+    --alt-color-0: #198388;
+    --alt-color-1: #ec0101;
+    --alt-color-2: #47d4b9;
+    --alt-color-3: #ff8a18;
+    --alt-color-4: #277fff;
+    --alt-color-5: #962ac3;
+    --alt-color-6: #05a1f7;
+    --alt-color-7: #ffffff;
+}
+
+
+/* ====== Color commands ====== */
+
+/* Foreground color  */
+.language-ansi .a30m,
+.language-ansi .a31m,
+.language-ansi .a32m,
+.language-ansi .a33m,
+.language-ansi .a34m,
+.language-ansi .a35m,
+.language-ansi .a36m,
+.language-ansi .a37m {
+    text-decoration-line: inherit;
+}
+
+.language-ansi .a30m { color: var(--color-0); }
+.language-ansi .a31m { color: var(--color-1); }
+.language-ansi .a32m { color: var(--color-2); }
+.language-ansi .a33m { color: var(--color-3); }
+.language-ansi .a34m { color: var(--color-4); }
+.language-ansi .a35m { color: var(--color-5); }
+.language-ansi .a36m { color: var(--color-6); }
+.language-ansi .a37m { color: var(--color-7); }
+
+
+/* Background color  */
+.language-ansi .a40m,
+.language-ansi .a41m,
+.language-ansi .a42m,
+.language-ansi .a43m,
+.language-ansi .a44m,
+.language-ansi .a45m,
+.language-ansi .a46m,
+.language-ansi .a47m {
+    /* Formula: font-size * (line-height - 1) / 2
+       Input values must be updated with theme     */
+    padding: calc(.78em * (1.5 - 1) / 2) 0;
+}
+
+.language-ansi .a40m { background-color: unset; }
+.language-ansi .a41m { background-color: var(--color-1); }
+.language-ansi .a42m { background-color: var(--color-2); }
+.language-ansi .a43m { background-color: var(--color-3); }
+.language-ansi .a44m { background-color: var(--color-4); }
+.language-ansi .a45m { background-color: var(--color-5); }
+.language-ansi .a46m { background-color: var(--color-6); }
+.language-ansi .a47m { background-color: var(--color-7); }
+
+
+/* ====== Other commands ====== */
+/* Not all commands supported, but the most important ones */
+
+/* Bold (use alt colors, which brighter) */
+.language-ansi .a1m { font-weight: bold; }
+.language-ansi .a1m.a30m, .language-ansi .a1m .a30m { color: var(--alt-color-0); }
+.language-ansi .a1m.a31m, .language-ansi .a1m .a31m { color: var(--alt-color-1); }
+.language-ansi .a1m.a32m, .language-ansi .a1m .a32m { color: var(--alt-color-2); }
+.language-ansi .a1m.a33m, .language-ansi .a1m .a33m { color: var(--alt-color-3); }
+.language-ansi .a1m.a34m, .language-ansi .a1m .a34m { color: var(--alt-color-4); }
+.language-ansi .a1m.a35m, .language-ansi .a1m .a35m { color: var(--alt-color-5); }
+.language-ansi .a1m.a36m, .language-ansi .a1m .a36m { color: var(--alt-color-6); }
+.language-ansi .a1m.a37m, .language-ansi .a1m .a37m { color: var(--alt-color-7); }
+
+
+.language-ansi .a2m { filter: brightness(80%); }  /* Dim, TODO: do not dim bgcolor */
+.language-ansi .a3m { font-style: italic; }  /* Italic */
+.language-ansi .a4m { text-decoration-line: underline; }  /* Underline */
+
+/* Blink */
+@keyframes language-ansi-blinker {
+    50% { color: transparent; }
+}
+.language-ansi .a5m,
+.language-ansi .a5m .a30m,
+.language-ansi .a5m .a31m,
+.language-ansi .a5m .a32m,
+.language-ansi .a5m .a33m,
+.language-ansi .a5m .a34m,
+.language-ansi .a5m .a35m,
+.language-ansi .a5m .a36m,
+.language-ansi .a5m .a37m,
+.language-ansi .a6m,
+.language-ansi .a6m .a30m,
+.language-ansi .a6m .a31m,
+.language-ansi .a6m .a32m,
+.language-ansi .a6m .a33m,
+.language-ansi .a6m .a34m,
+.language-ansi .a6m .a35m,
+.language-ansi .a6m .a36m,
+.language-ansi .a6m .a37m {
+    animation: language-ansi-blinker 1.2s step-start infinite;
+}
+
+/* Hide */
+.language-ansi .a8m,
+.language-ansi .a8m .a30m,
+.language-ansi .a8m .a31m,
+.language-ansi .a8m .a32m,
+.language-ansi .a8m .a33m,
+.language-ansi .a8m .a34m,
+.language-ansi .a8m .a35m,
+.language-ansi .a8m .a36m,
+.language-ansi .a8m .a37m {
+    color: transparent;
+}

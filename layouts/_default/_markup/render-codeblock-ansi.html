@@ -1,0 +1,31 @@
+{{ $input := transform.HTMLEscape .Inner }}
+
+
+<!-- Split ANSI escseq with `reset` command into two separate escseq -->
+{{ $input = add $input "\x1b[m" }}
+{{ $res := replaceRE `\x1b\[(?:(?:\d*;)*(?:0*;))((?:[1-9]\d*;?)+)m` "\x1b[m\x1b[${1}m" $input }}
+
+
+{{ $n := len (findRE `\x1b\[(?:\d+;?)+m` $res) }}
+{{ $cnt := 0 }}
+
+{{ range $i := seq $n }}
+    {{ if lt $i $cnt }} {{ continue }} {{ end }}
+
+    {{ range $match := findRESubmatch `(?s)\x1b\[((?:\d+;?)+)m(.*?)\x1b\[0*m` $res }}
+        {{ $class := replaceRE `0*(\d+)[;m]?` `a${1}m ` (index $match 1) }}
+
+        {{ $regex := printf `(?s)\x1b\[%sm(.*?)\x1b\[0*m` (index $match 1) }}
+        {{ $sub := printf "<span class='%s'>$1</span>\x1b[m" $class }}
+
+        {{ $res = replaceRE $regex $sub $res }}
+        {{ $cnt = add $cnt 1 }}
+    {{ end }}
+{{ end }}
+
+{{ $res = replaceRE `\x1b\[(\d*;?)*m` "" $res }}
+
+
+<div>
+    <pre><code class="language-ansi" data-lang="ansi"><div>{{ $res | safeHTML }}</div></code></pre>
+</div>
